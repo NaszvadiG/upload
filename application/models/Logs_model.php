@@ -5,7 +5,7 @@ class Logs_model extends CI_Model {
     private $table = 'logs';
     private $column_order = array('time', 'logs'); //set column field database for datatable orderable
     private $column_search = array('time', 'logs', 'ip'); //set column field database for datatable searchable just firstname , lastname , and email are searchable
-    private $order = array('time' => 'asc'); // default order 
+    private $order = array('time' => 'desc'); // default order 
  
     public function __construct()
     {

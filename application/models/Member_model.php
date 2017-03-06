@@ -120,6 +120,17 @@
 		}
 
 		/**
+		 * [insert_api description]
+		 * @param  [type] $post [description]
+		 * @return [type]       [description]
+		 */
+		public function insert_api($post)
+		{
+			$this->db->insert('api_keys', $post);
+			return $this->db->insert_id();
+		}
+
+		/**
 		 * [get_user_info_by_email description]
 		 * Function used for get user detail based on email
 		 * @param  [String] $email [email param]

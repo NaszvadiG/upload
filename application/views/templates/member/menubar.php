@@ -25,7 +25,7 @@
                 <a href="javascript:void(0);" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false"></a>
                 <a href="javascript:void(0);" class="bars"></a>
                 <span>   
-                <img height="40" width="160" src="<?php echo site_url() ?>public/assets/img/logo-white-full.png">
+                <img height="30" width="140" src="<?php echo site_url() ?>public/assets/img/logo-white-full.png">
                 </span>
             </div>
         </div>

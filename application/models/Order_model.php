@@ -5,7 +5,7 @@ class Order_model extends CI_Model {
 	private $table = 'orders';
     private $column_order = array('o.id'); //set column field database for datatable orderable
     private $column_search = array('o.domain'); //set column field database for datatable searchable just firstname , lastname , and email are searchable
-    private $order = array('o.id' => 'asc'); // default order 
+    private $order = array('o.id' => 'desc'); // default order 
 
     public function __construct()
     {
@@ -66,7 +66,8 @@ class Order_model extends CI_Model {
     
     public function update($where, $data)
     {
-    	$this->db->update($this->table, $data, $where);
+        $this->db->update($this->table, array('status' => 1, 'updated_at' => date('Y:m:d H:i:')), $where);
+    	$this->db->update('api_keys', $data, $where);
     	return $this->db->affected_rows();
     }
 

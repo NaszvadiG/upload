@@ -17,6 +17,7 @@
 			}
 			$this->roles = $this->config->item('roles');
 			$this->load->library(array('bcrypt', 'form_validation'));
+			$this->load->helper('string');
 			$this->form_validation->set_error_delimiters('<div class="alert alert-danger alert-dismissible">', '</div>');
 			$this->load->model('admin_model', 'mdl', TRUE);
 			$this->load->model('admin_datatable_model', 'dttb', TRUE);
@@ -85,10 +86,25 @@
 
 		public function orders()
 		{
-			$sum 		= $this->mdl->count('orders', '');
-			$completed 	= $this->mdl->count('orders', array('status' => 1));
-			$pending 	= $this->mdl->count('orders', array('status' => 0));
-			$expired 	= $this->mdl->count('orders', array('status' => 2));
+			$sum 		= $this->mdl->count('orders', '') ? $this->mdl->count('orders', '') : 0;
+			// isset($param['_id']) ? $param['_id'] : null
+			$completed 	= $this->mdl->count('orders', array('status' => 1)) ? $this->mdl->count('orders', array('status' => 1)) : 0;
+			$pending 	= $this->mdl->count('orders', array('status' => 0)) ? $this->mdl->count('orders', array('status' => 0)) : 0;
+			$expired 	= $this->mdl->count('orders', array('status' => 2)) ? $this->mdl->count('orders', array('status' => 2)) : 0;
+
+			/*calc here*/
+			$perc_completed = 0;
+			$perc_pend		= 0;
+			$perc_exp		= 0;
+			if($sum != 0)
+				$perc_completed = ceil(($completed/$sum)*100);
+			
+			if($sum != 0)
+				$perc_pend = ceil(($pending/$sum)*100);
+			
+			if($sum != 0)
+				$perc_exp = ceil(($expired/$sum)*100);
+
 
 			$col_select = array(
 				'o.id AS "order_id"',
@@ -106,14 +122,15 @@
 				'completed'	=> $completed,
 				'pending'	=> $pending,
 				'expired'	=> $expired,
-				'perc_comp'	=> ceil(($completed/$sum)*100),
-				'perc_pend'	=> ceil(($pending/$sum)*100),
-				'perc_exp'	=> ceil(($expired/$sum)*100),
+				'perc_comp'	=> $perc_completed,
+				'perc_pend'	=> $perc_pend,
+				'perc_exp'	=> $perc_exp,
 				'column'	=> array('order_id', 'name', 'domain', 'api_key', 'date', 'price', 'status'),
 				'data_order'=> $this->mdl->show_orders($col_select, 'orders o', 'api_keys a', 'members m', 'o.id = a.order_id', 'o.user_id = m.id', 'left')->result_array()		
 			);
 			
-			$this->page('orders', $data);
+			print_r($data);
+			// $this->page('orders', $data);
 		}
 
 		public function api()
@@ -130,13 +147,22 @@
 				'a.active AS "status"'
 			);
 
+			$perc = 0;
+			$pern = 0;
+
+			if($sum != 0)
+				$perc = ceil(($completed/$sum)*100);
+			
+			if($sum != 0)
+				$pern = ceil(($non_active/$sum)*100);
+
 			$data = array(
 				'title' => 'API Keys',
 				'sum'	=> $sum,
 				'comp'	=> $completed,
-				'perc'	=> ceil(($completed/$sum)*100),
+				'perc'	=> $perc,
 				'non'	=> $non_active,
-				'pern'	=> ceil(($non_active/$sum)*100),
+				'pern'	=> $pern,
 				'col'	=> array('id', 'name', 'domain', 'key', 'status'),
 				'data'	=> $this->mdl->show_orders($col_select, 'api_keys a', 'orders o', 'members m', 'a.order_id = o.id ', 'o.user_id = m.id', 'left')->result_array()
 			);
@@ -199,11 +225,11 @@
 	            $row[] = $value->email;
 	            $row[] = $value->phone;
 	            $row[] = $value->address;
-	            $row[] = $value->password;
+	            $row[] = '******';
 	 
 	            //add html for action
-	            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_person('."'".$value->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
-	                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_person('."'".$value->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
+	            $row[] = '<a class="btn btn-xs bg-blue" href="javascript:void(0)" title="Edit" onclick="edit_person('."'".$value->id."'".')"><i class="glyphicon glyphicon-pencil"></i></a>
+	                  <a class="btn btn-xs bg-red" href="javascript:void(0)" title="Hapus" onclick="delete_person('."'".$value->id."'".')"><i class="glyphicon glyphicon-trash"></i></a>';
 	 
 	            $data[] = $row;
 	        }
@@ -227,6 +253,10 @@
 	    public function ajax_add()
 	    {
 	    	$post = $this->security->xss_clean($this->input->post());
+	    	
+	    	if(!empty($post['id']))
+	    		unset($post['id']);
+
 	    	$post['role'] = $this->roles[1];
 	    	$password = $post['password'];
 	    	unset($post['password']);
@@ -270,11 +300,11 @@
 	        }
 	 
 	        $output = array(
-	                        "draw" => $_POST['draw'],
-	                        "recordsTotal" => $this->logmdl->count_all(),
-	                        "recordsFiltered" => $this->logmdl->count_filtered(),
-	                        "data" => $data,
-	                );
+                    "draw" => $_POST['draw'],
+                    "recordsTotal" => $this->logmdl->count_all(),
+                    "recordsFiltered" => $this->logmdl->count_filtered(),
+                    "data" => $data,
+            );
 	        //output to json format
 	        echo json_encode($output);
 	    }
@@ -300,11 +330,16 @@
 	            $row[] = $value->date;
 	            $row[] = $value->price;
 	            $val = $value->status;
+
 	 			if($val == 1)
 	 				$row[] = '<td><span class="label label-success">Verified</span></td>';
 	 			elseif($val == 0)
 	 				$row[] = '<td><span class="label label-warning">Pending</span></td>';
-	            $row[] = 'action';
+	            
+	 			if($value->api_key == '')
+		            $row[] = '<td><a href="javascript:void(0)" class="btn btn-xs bg-blue" onclick="checkout_api('."'".$value->order_id."'".')"><i class="fa fa-check-square"> Generate API</i></a><td>';
+		        else
+		        	$row[] = '<td><label class="label label-success"><i class="fa fa-check-square"></i></label><td>';
 	 
 	            $data[] = $row;
 	        }
@@ -317,6 +352,24 @@
         );
 	        //output to json format
 	        echo json_encode($output);
+	    }
+
+	    public function generate_api(){
+	        $base = "UBG-PLG-";
+	        $rand = random_string('alnum', 15);
+	        $unix = substr(time(), -5);
+	        return $base.$rand.$unix;
+	    }
+
+	    public function checkout_api($id)
+	    {
+	    	$data = array(
+	    		'key'		=> $this->generate_api(),
+	    		'updated_at'=> date('Y-m-d H:i:s'),
+	    		'active'	=> 1
+    		);
+	        $res = $this->omdl->update(array('id' => $id), $data);
+	        echo json_encode(array("status" => TRUE, "res" => $res));	
 	    }
 
 		public function logout()

@@ -53,7 +53,7 @@
 		                            </div>
 		                        </div>
 			                    <div class="box-footer">
-			                        <button type="submit" class="btn btn-success">Save</button>
+			                        <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Save</button>
 			                    </div>
 			                <?php echo form_close() ?>
 			            </div>
@@ -67,7 +67,7 @@
 					            </div>
 								<!-- /.box-header -->
 								<div class="box-body">
-									<table id="logs" class="table table-bordered table-striped">
+									<table id="logs" class="table table-bordered table-striped table-responsive">
 										<thead>
 											<tr>
 												<th>Time</th>

@@ -4,15 +4,9 @@
 		<div class="content-wrapper">
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
-				<?php 
-					$var = gethostbyname('ubig.co.id') ; 
-					echo "IP: ".$var;
-					echo "</br>HTTP_HOST [{$_SERVER['HTTP_HOST']}]</br>"; echo "SERVER_NAME [{$_SERVER['SERVER_NAME']}]"; 
-				?>
-
 				<h1>
 					Assalamu'alaikum
-					<small><?php echo $this->session->userdata('name') ?></small>
+					<small><?php echo $this->session->userdata('name_admin') ?></small>
 				</h1>
 				<ol class="breadcrumb">
 					<li><a href="<?php echo site_url() ?>administrator"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -176,7 +170,7 @@
 									</div>
 									<!-- /.box-body -->
 									<div class="box-footer text-center">
-										<a href="javascript:void(0)" class="uppercase">View All API</a>
+										<a href="<?php echo site_url() ?>administrator/api" class="uppercase">View All API</a>
 									</div>
 									<!-- /.box-footer -->
 								</div>

@@ -60,5 +60,6 @@ $route['administrator/orders']	= 'admin_controller/orders';
 $route['administrator/api']		= 'admin_controller/api';
 $route['administrator/setting']	= 'admin_controller/setting';
 $route['administrator/admin']	= 'admin_controller/admin';
-$route['404_override'] 			= '';
+$route['administrator/logout']	= 'admin_controller/logout';
+$route['404_override'] 			= 'my_404';
 $route['translate_uri_dashes'] 	= FALSE;

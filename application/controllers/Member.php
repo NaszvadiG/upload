@@ -54,7 +54,11 @@
 
 		public function submit_form()
 		{
-			$price = $this->mdl_admin->select_col('options', array('value'), '')->result_array()[0]['value'];
+			$get_price = $this->mdl_admin->select_col('options', array('value'), '')->result_array()[0]['value'];
+			$price = 0;
+			if (!empty($get_price)) 
+				$price = $get_price;
+			
 			$data = array(
 				'domain'	=> $this->security->xss_clean($this->input->post('input_domain')),
 				'price' 	=> $price,
@@ -63,6 +67,16 @@
 				'created_at' => date('Y-m-d H:i:s')
 			);
 			$url = $this->mdl->add_order($data);
+			$insert_api = $this->mdl->insert_api(
+				array(
+					'domain'	=> $data['domain'],
+					'ip'		=> gethostbyname($data['domain']),
+					'order_id'	=> $url,
+					'active'	=> 0,
+					'created_at'=> date('Y-m-d H:i:s')
+				)
+			);
+
 			redirect('member/invoice/'.$url);
 		}
 

@@ -60,36 +60,56 @@
 		?>
 	<script type="text/javascript">
 		$(document).ready(function() {
-				 $.ajaxSetup({
-			        data: {
-			            '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>'
-			        }
-			    });
+			 $.ajaxSetup({
+		        data: {
+		            '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>'
+		        }
+		    });
+		 
+		    //datatables
+		    table = $('#data_order').DataTable({ 
+		 
+		        "processing": true, //Feature control the processing indicator.
+		        "serverSide": true, //Feature control DataTables' server-side processing mode.
+		        "order": [], //Initial no order.
+		 
+		        // Load data for the table's content from an Ajax source
+		        "ajax": {
+		            "url": "<?php echo site_url('admin_controller/ajax_list_orders')?>",
+		            "type": "POST"
+		        },
+		 
+		        //Set column definition initialisation properties.
+		        "columnDefs": [
+		        { 
+		            "targets": [ -1 ], //last column
+		            "orderable": false, //set not orderable
+		        }
+		        ]
+		    });
+		 
+		});
+
+		function checkout_api(id) {
+			if(confirm('Are you sure to checkout an API?'))
+			    {
+			        // ajax delete data to database
+			        $.ajax({
+			            url : "<?php echo site_url('admin_controller/checkout_api')?>/"+id,
+			            type: "POST",
+			            dataType: "JSON",
+			            success: function(data)
+			            {
+		                	table.ajax.reload(null,false); ;
+			            },
+			            error: function (jqXHR, textStatus, errorThrown)
+			            {
+			                alert('Error checkout API');
+			            }
+			        });
 			 
-			    //datatables
-			    table = $('#data_order').DataTable({ 
-			 
-			        "processing": true, //Feature control the processing indicator.
-			        "serverSide": true, //Feature control DataTables' server-side processing mode.
-			        "order": [], //Initial no order.
-			 
-			        // Load data for the table's content from an Ajax source
-			        "ajax": {
-			            "url": "<?php echo site_url('admin_controller/ajax_list_orders')?>",
-			            "type": "POST"
-			        },
-			 
-			        //Set column definition initialisation properties.
-			        "columnDefs": [
-			        { 
-			            "targets": [ -1 ], //last column
-			            "orderable": false, //set not orderable
-			        }
-			        ]
-			 
-			    });
-			 
-			});
+			    }
+		}
 	</script>
 		<?php
 	}
@@ -106,7 +126,7 @@
 
         <script type="text/javascript">
         	$(document).ready(function() {
-				 $.ajaxSetup({
+				$.ajaxSetup({
 			        data: {
 			            '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>'
 			        }
@@ -124,6 +144,7 @@
 			            "url": "<?php echo site_url('admin_controller/ajax_list_logs/')?>",
 			            "type": "POST"
 			        },
+			        "responsive": true,
 			 
 			        //Set column definition initialisation properties.
 			        "columnDefs": [

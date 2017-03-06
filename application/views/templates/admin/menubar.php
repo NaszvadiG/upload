@@ -36,7 +36,7 @@
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-right">
-                	<?php echo anchor('member/logout', 'Sign Out', array('class' => 'btn btn-default btn-flat')) ?>
+                	<?php echo anchor('administrator/logout', 'Sign Out', array('class' => 'btn btn-default btn-flat')) ?>
                 </div>
               </li>
             </ul>
